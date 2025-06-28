@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Behavior Tracker - Special Needs Education</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/7.6.0/docx.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <h1>📊 Behavior Tracker</h1>
+                <div class="header-actions">
+                    <button class="btn btn--secondary" id="theme-toggle">🌙</button>
+                    <span class="current-date" id="current-date"></span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-tabs">
+            <button class="nav-tab active" data-tab="dashboard">📋 Dashboard</button>
+            <button class="nav-tab" data-tab="tracking">⏰ Tracking</button>
+            <button class="nav-tab" data-tab="analytics">📈 Analytics</button>
+            <button class="nav-tab" data-tab="reports">📄 Reports</button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Tab -->
+            <div class="tab-content active" id="dashboard-tab">
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Students</h3>
+                            <div class="student-stats">
+                                <div class="stat">
+                                    <span class="stat-number" id="total-students">0</span>
+                                    <span class="stat-label">Total Students</span>
+                                </div>
+                            </div>
+                            <button class="btn btn--primary btn--full-width" id="add-student-btn">➕ Add Student</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Recent Activity</h3>
+                            <div class="recent-activity" id="recent-activity">
+                                <p class="text-secondary">No recent behavior records</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card student-list-card">
+                        <div class="card__body">
+                            <h3>Student List</h3>
+                            <div class="student-list" id="student-list">
+                                <!-- Students will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tracking Tab -->
+            <div class="tab-content" id="tracking-tab">
+                <div class="tracking-header">
+                    <div class="tracking-controls">
+                        <select class="form-control" id="student-select">
+                            <option value="">Select a student</option>
+                        </select>
+                        <input type="date" class="form-control" id="tracking-date">
+                    </div>
+                </div>
+
+                <div class="behavior-categories">
+                    <div class="category-section">
+                        <h4>✅ Positive Behaviors</h4>
+                        <div class="behavior-buttons" id="positive-behaviors">
+                            <!-- Positive behavior buttons will be populated here -->
+                        </div>
+                    </div>
+                    <div class="category-section">
+                        <h4>⚠️ Challenging Behaviors</h4>
+                        <div class="behavior-buttons" id="challenging-behaviors">
+                            <!-- Challenging behavior buttons will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="time-grid-container">
+                    <h4>Time Intervals (7:30 AM - 3:30 PM)</h4>
+                    <div class="time-grid" id="time-grid">
+                        <!-- Time slots will be populated here -->
+                    </div>
+                </div>
+
+                <div class="behavior-entry-form" id="behavior-entry-form" style="display: none;">
+                    <div class="card">
+                        <div class="card__body">
+                            <h4>Record Behavior</h4>
+                            <div class="form-group">
+                                <label class="form-label">Selected Time Slot:</label>
+                                <span id="selected-time-slot"></span>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Selected Behavior:</label>
+                                <span id="selected-behavior"></span>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="behavior-notes">Notes (optional):</label>
+                                <textarea class="form-control" id="behavior-notes" rows="3" placeholder="Add any relevant notes about this behavior..."></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button class="btn btn--secondary" id="cancel-entry">Cancel</button>
+                                <button class="btn btn--primary" id="save-entry">Save Entry</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div class="tab-content" id="analytics-tab">
+                <div class="analytics-controls">
+                    <select class="form-control" id="analytics-student-select">
+                        <option value="">Select a student for analysis</option>
+                    </select>
+                    <input type="date" class="form-control" id="analytics-date">
+                </div>
+
+                <div class="charts-grid">
+                    <div class="card">
+                        <div class="card__body">
+                            <h4>Daily Behavior Summary</h4>
+                            <canvas id="daily-chart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card__body">
+                            <h4>Behavior Distribution</h4>
+                            <canvas id="pie-chart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card__body">
+                            <h4>Weekly Trends</h4>
+                            <canvas id="trend-chart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Tab -->
+            <div class="tab-content" id="reports-tab">
+                <div class="reports-controls">
+                    <select class="form-control" id="reports-student-select">
+                        <option value="">Select a student for reports</option>
+                    </select>
+                    <div class="date-range">
+                        <input type="date" class="form-control" id="report-start-date">
+                        <span>to</span>
+                        <input type="date" class="form-control" id="report-end-date">
+                    </div>
+                </div>
+
+                <div class="export-actions">
+                    <button class="btn btn--primary" id="export-word">📄 Export to Word</button>
+                    <button class="btn btn--primary" id="export-excel">📊 Export to Excel</button>
+                </div>
+
+                <div class="report-preview card">
+                    <div class="card__body">
+                        <h4>Report Preview</h4>
+                        <div id="report-content">
+                            <p class="text-secondary">Select a student and date range to generate a report preview</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Student Modal -->
+    <div class="modal" id="student-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Add Student</h3>
+                <button class="modal-close" id="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="student-form">
+                    <div class="form-group">
+                        <label class="form-label" for="student-name">Student Name *</label>
+                        <input type="text" class="form-control" id="student-name" required>
+                        <div class="error-message" id="name-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="student-grade">Grade</label>
+                        <select class="form-control" id="student-grade">
+                            <option value="">Select grade</option>
+                            <option value="Pre-K">Pre-K</option>
+                            <option value="K">K</option>
+                            <option value="1st">1st</option>
+                            <option value="2nd">2nd</option>
+                            <option value="3rd">3rd</option>
+                            <option value="4th">4th</option>
+                            <option value="5th">5th</option>
+                            <option value="6th">6th</option>
+                            <option value="7th">7th</option>
+                            <option value="8th">8th</option>
+                            <option value="9th">9th</option>
+                            <option value="10th">10th</option>
+                            <option value="11th">11th</option>
+                            <option value="12th">12th</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn--secondary" id="modal-cancel">Cancel</button>
+                <button class="btn btn--primary" id="modal-save">Save Student</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal" id="confirm-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirm Action</h3>
+            </div>
+            <div class="modal-body">
+                <p id="confirm-message"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn--secondary" id="confirm-cancel">Cancel</button>
+                <button class="btn btn--primary" id="confirm-ok">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span id="toast-message"></span>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
