@@ -79,12 +79,20 @@ class BehaviorTracker {
     }
     
     setupEventListeners() {
-        // Tab navigation
+        // Tab navigation (if present)
         document.querySelectorAll('.nav-tab').forEach(tab => {
             tab.addEventListener('click', (e) => {
                 this.switchTab(e.target.dataset.tab);
             });
         });
+
+        // Scan button
+        const scanBtn = document.getElementById('scan-button');
+        if (scanBtn) {
+            scanBtn.addEventListener('click', () => {
+                this.switchTab('tracking');
+            });
+        }
         
         // Student management
         document.getElementById('add-student-btn').addEventListener('click', () => {
@@ -233,7 +241,10 @@ class BehaviorTracker {
         document.querySelectorAll('.nav-tab').forEach(tab => {
             tab.classList.remove('active');
         });
-        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+        const navTab = document.querySelector(`[data-tab="${tabName}"]`);
+        if (navTab) {
+            navTab.classList.add('active');
+        }
         
         // Show active content
         document.querySelectorAll('.tab-content').forEach(content => {
